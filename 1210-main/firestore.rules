@@ -1,0 +1,54 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Default-deny catch-all
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isValidIncident(data) {
+      return data.id is string && data.id.size() <= 128 &&
+             data.title is string && data.title.size() <= 200 &&
+             data.severity in ['critical', 'warning', 'advisory', 'normal'] &&
+             data.location is string && data.location.size() <= 200 &&
+             data.acknowledged is bool;
+    }
+
+    function isValidPreference(data) {
+      return data.mode in ['deep-ops', 'oled-black', 'night-vision', 'daylight'] &&
+             data.accent in ['cyan', 'emerald', 'amber', 'blue'] &&
+             data.highContrast is bool;
+    }
+
+    // Incidents Collection
+    match /incidents/{incidentId} {
+      allow read: if isValidId(incidentId);
+      allow create: if isValidId(incidentId) && isValidIncident(incoming());
+      allow update: if isValidId(incidentId) && isValidIncident(incoming());
+      allow delete: if false;
+    }
+
+    // User Preferences Collection
+    match /preferences/{userId} {
+      allow read: if isValidId(userId);
+      allow create, update: if isValidId(userId) && isValidPreference(incoming());
+      allow delete: if false;
+    }
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "entities": {
+    "AlertIncident": {
+      "title": "AlertIncident",
+      "description": "Record of emergency flood alerts and operator acknowledgements",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "title": { "type": "string", "maxLength": 200 },
+        "severity": { "type": "string", "enum": ["critical", "warning", "advisory", "normal"] },
+        "location": { "type": "string", "maxLength": 200 },
+        "timestamp": { "type": "string", "maxLength": 50 },
+        "description": { "type": "string", "maxLength": 1000 },
+        "acknowledged": { "type": "boolean" },
+        "actionRequired": { "type": "string", "maxLength": 500 },
+        "dispatchedAt": { "type": "string", "maxLength": 50 }
+      },
+      "required": ["id", "title", "severity", "location", "acknowledged"]
+    },
+    "UserPreference": {
+      "title": "UserPreference",
+      "description": "User display and monitoring preferences",
+      "type": "object",
+      "properties": {
+        "mode": { "type": "string", "enum": ["deep-ops", "oled-black", "night-vision", "daylight"] },
+        "accent": { "type": "string", "enum": ["cyan", "emerald", "amber", "blue"] },
+        "highContrast": { "type": "boolean" },
+        "selectedRegionId": { "type": "string", "maxLength": 50 }
+      },
+      "required": ["mode", "accent", "highContrast"]
+    }
+  },
+  "firestore": {
+    "/incidents/{incidentId}": {
+      "schema": "AlertIncident",
+      "description": "Collection of municipal flood incidents and warnings"
+    },
+    "/preferences/{userId}": {
+      "schema": "UserPreference",
+      "description": "User specific display and region preferences"
+    }
+  }
+}

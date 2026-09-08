@@ -1,0 +1,7 @@
+{
+  "name": "FloodAI Command Center",
+  "description": "Hydrological early warning command center with real-time river telemetry, spatial flood mapping, AI predictive trajectory, and automated alert dispatch.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
+
