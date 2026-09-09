@@ -14,13 +14,14 @@ export type PageId =
   | 'Flood Map'
   | 'Rescue Camps'
   | 'Flood Types'
+  | 'Alerts'
+  | 'Team Sync'
   | 'Prediction'
   | 'River Gauges'
   | 'Sensors'
   | 'Impact'
   | 'Explainability'
-  | 'History'
-  | 'Alerts';
+  | 'History';
 
 export interface RescueCamp {
   id: string;

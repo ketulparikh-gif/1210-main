@@ -24,6 +24,7 @@ import {
   Waves,
 } from 'lucide-react';
 import { playEmergencySiren, stopEmergencySiren } from '../utils/audioSiren';
+import { buildFloodEmergencyMessage } from '../utils/floodAlertMessage';
 import { GroqIntelligenceModal } from './GroqIntelligenceModal';
 
 interface AlertsViewProps {
@@ -108,6 +109,19 @@ export const AlertsView: React.FC<AlertsViewProps> = ({
   const [broadcastSuccessNotice, setBroadcastSuccessNotice] = useState<string | null>(null);
   const [groqModalOpen, setGroqModalOpen] = useState(false);
   const [customMsgEnglish, setCustomMsgEnglish] = useState<string | null>(null);
+  const [teamAlertPlace, setTeamAlertPlace] = useState('Old City, Ahmedabad');
+  const [teamAlertSeverity, setTeamAlertSeverity] = useState<'Low' | 'Medium' | 'High' | 'Critical'>('High');
+  const [teamAlertDepth, setTeamAlertDepth] = useState('1.5m');
+  const [teamAlertEta, setTeamAlertEta] = useState('in 30 mins');
+  const [teamAlertRecipient, setTeamAlertRecipient] = useState('hackathon team');
+
+  const teamAlertMessage = buildFloodEmergencyMessage({
+    place: teamAlertPlace,
+    severity: teamAlertSeverity,
+    floodDepth: teamAlertDepth,
+    eta: teamAlertEta,
+    recipient: teamAlertRecipient,
+  });
 
   // Sync with region changes
   useEffect(() => {
@@ -211,6 +225,23 @@ export const AlertsView: React.FC<AlertsViewProps> = ({
       setEnableSirens(false);
       setEnableSMS(true);
     }
+  };
+
+  const handleSendTeamAlert = () => {
+    const message = buildFloodEmergencyMessage({
+      place: teamAlertPlace,
+      severity: teamAlertSeverity,
+      floodDepth: teamAlertDepth,
+      eta: teamAlertEta,
+      recipient: teamAlertRecipient,
+    });
+
+    setCustomMsgEnglish(message);
+    setAlertTitle(`TEAM FLOOD ALERT: ${teamAlertPlace}`);
+    setSeverity(teamAlertSeverity === 'Critical' ? 'critical' : teamAlertSeverity === 'High' ? 'warning' : 'advisory');
+    setFloodType('Flash Flood (Cloudburst)');
+    setBroadcastSuccessNotice(`Demo message sent to ${teamAlertRecipient}: ${message}`);
+    setTimeout(() => setBroadcastSuccessNotice(null), 6000);
   };
 
   const handleAuthorizeBroadcast = () => {
@@ -317,6 +348,81 @@ export const AlertsView: React.FC<AlertsViewProps> = ({
           </div>
         </div>
       )}
+
+      {/* Team Emergency Alert Composer */}
+      <div className="p-5 rounded-2xl bg-[#101b2d] border border-violet-500/30 shadow-xl space-y-4">
+        <div className="flex items-center justify-between gap-3 border-b border-slate-800 pb-3">
+          <div>
+            <div className="text-[11px] font-bold uppercase tracking-[0.2em] text-violet-300">Emergency Team Message</div>
+            <h2 className="text-lg font-bold text-white mt-1">Send a flood alert to your team</h2>
+          </div>
+          <button
+            type="button"
+            onClick={handleSendTeamAlert}
+            className="px-3 py-2 rounded-xl bg-violet-600 hover:bg-violet-500 text-white text-xs font-bold flex items-center gap-2"
+          >
+            <Send className="w-3.5 h-3.5" />
+            Send Alert
+          </button>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3">
+          <div className="space-y-1.5">
+            <label className="text-[10px] uppercase tracking-wide text-slate-400">Location</label>
+            <input
+              value={teamAlertPlace}
+              onChange={(e) => setTeamAlertPlace(e.target.value)}
+              className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs"
+              placeholder="Old City, Ahmedabad"
+            />
+          </div>
+          <div className="space-y-1.5">
+            <label className="text-[10px] uppercase tracking-wide text-slate-400">Severity</label>
+            <select
+              value={teamAlertSeverity}
+              onChange={(e) => setTeamAlertSeverity(e.target.value as 'Low' | 'Medium' | 'High' | 'Critical')}
+              className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs"
+            >
+              <option value="Low">Low</option>
+              <option value="Medium">Medium</option>
+              <option value="High">High</option>
+              <option value="Critical">Critical</option>
+            </select>
+          </div>
+          <div className="space-y-1.5">
+            <label className="text-[10px] uppercase tracking-wide text-slate-400">Flood Water</label>
+            <input
+              value={teamAlertDepth}
+              onChange={(e) => setTeamAlertDepth(e.target.value)}
+              className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs"
+              placeholder="1.5m"
+            />
+          </div>
+          <div className="space-y-1.5">
+            <label className="text-[10px] uppercase tracking-wide text-slate-400">Time</label>
+            <input
+              value={teamAlertEta}
+              onChange={(e) => setTeamAlertEta(e.target.value)}
+              className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs"
+              placeholder="in 30 mins"
+            />
+          </div>
+        </div>
+
+        <div className="space-y-1.5">
+          <label className="text-[10px] uppercase tracking-wide text-slate-400">Send to</label>
+          <input
+            value={teamAlertRecipient}
+            onChange={(e) => setTeamAlertRecipient(e.target.value)}
+            className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs"
+            placeholder="hackathon team"
+          />
+        </div>
+
+        <div className="p-3 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-200 leading-relaxed font-mono">
+          {teamAlertMessage}
+        </div>
+      </div>
 
       {/* GOVT RAPID BROADCAST CONSOLE */}
       <div className="p-6 rounded-2xl bg-[#0c1322] border border-cyan-500/30 shadow-xl space-y-5">

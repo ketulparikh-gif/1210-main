@@ -29,6 +29,7 @@ import { AlertsView } from './components/AlertsView';
 import { RescueCampsView } from './components/RescueCampsView';
 import { FloodTypesView } from './components/FloodTypesView';
 import { Activity, Check, Info, ShieldCheck, Waves } from 'lucide-react';
+import { TeamAlertSyncView } from './components/TeamAlertSyncView';
 
 export default function App() {
   const [activePage, setActivePage] = useState<PageId>('Dashboard');
@@ -323,6 +324,8 @@ export default function App() {
             onAddNewAlert={handleAddNewAlert}
           />
         )}
+
+        {activePage === 'Team Sync' && <TeamAlertSyncView />}
         </div>
       </main>
 

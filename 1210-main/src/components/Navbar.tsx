@@ -49,6 +49,7 @@ const NAV_ITEMS: { id: PageId; label: string; icon: string; badge?: string }[] =
   { id: 'Rescue Camps', label: 'Safe Camps', icon: 'Building2', badge: 'Safe Places' },
   { id: 'Flood Types', label: 'Flood Types', icon: 'ShieldAlert', badge: 'Safety' },
   { id: 'Alerts', label: 'Emergency Alerts', icon: 'Bell', badge: 'Alerts' },
+  { id: 'Team Sync', label: 'Team Sync', icon: 'BellRing', badge: 'Team' },
   { id: 'Prediction', label: 'Water Forecast', icon: 'TrendingUp' },
   { id: 'River Gauges', label: 'River Levels', icon: 'Gauge' },
   { id: 'Sensors', label: 'Sensors', icon: 'Radio' },
